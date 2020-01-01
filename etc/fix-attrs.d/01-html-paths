@@ -1,0 +1,3 @@
+/var/www/html true www-data 0644 0755
+/var/www/html/config true www-data 0755 0755
+/var/www/html/jpcache true www-data 0755 0755
