@@ -1,9 +1,6 @@
-FROM alpine:3.7.3 as builder
+FROM alpine/git:v2.24.1 as builder
 
 WORKDIR /
-
-RUN apk add --no-cache \
-		git
 
 RUN git clone https://github.com/OpenAai/php-syslog-ng.git
 	
@@ -21,7 +18,8 @@ RUN sed -e "s|$_VERSION =& new version();|$_VERSION = new version();|" -i php-sy
 #
 FROM moonbuggy2000/alpine-s6-nginx-php-fpm:php5.6
 
-RUN apk add --no-cache \
+RUN . /etc/contenv_extra \
+	&& apk add --no-cache \
 		${PHP_PACKAGE}-gd=~${PHP_VERSION} \
 		${PHP_PACKAGE}-ldap=~${PHP_VERSION} \
 		${PHP_PACKAGE}-mysql=~${PHP_VERSION} \
