@@ -1,6 +1,8 @@
 ARG PHP_VERSION="5.6"
 ARG FROM_IMAGE="moonbuggy2000/alpine-s6-nginx-php-fpm:${PHP_VERSION}"
 
+ARG QEMU_ARCH="arm"
+
 FROM moonbuggy2000/fetcher:latest as builder
 
 WORKDIR /
@@ -17,9 +19,13 @@ RUN git clone https://github.com/PHPOffice/PHPExcel.git \
 #
 RUN sed -e "s|$_VERSION =& new version();|$_VERSION = new version();|" -i php-syslog-ng/www/html/includes/version.php
 
-# build the final image
+## build the image
 #
-FROM "${FROM_IMAGE}"
+FROM multiarch/qemu-user-static:x86_64-${QEMU_ARCH} AS qemu
+FROM ${FROM_IMAGE}
+
+ARG QEMU_ARCH
+COPY --from=qemu /usr/bin/qemu-${QEMU_ARCH}-static /usr/bin
 
 ARG PHP_VERSION
 ARG PHP_PACKAGE="php5"
